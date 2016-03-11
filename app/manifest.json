@@ -1,0 +1,15 @@
+{
+    "name": "ambient.sil",
+    "description": "Ambient sounds player",
+    "architecture": "all",
+    "title": "Ambient",
+    "hooks": {
+        "Ambient": {
+            "apparmor": "Ambient.apparmor",
+            "desktop": "Ambient.desktop"
+        }
+    },
+    "version": "0.1",
+    "maintainer": "Stuart Langridge <sil-launchpad@kryogenix.org>",
+    "framework": "ubuntu-sdk-15.04.3"
+}

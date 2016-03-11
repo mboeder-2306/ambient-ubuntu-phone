@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Ambient
+Exec=qmlscene %U Main.qml
+Icon=Ambient.png
+Terminal=false
+Type=Application
+X-Ubuntu-Touch=true
+
