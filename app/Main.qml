@@ -75,6 +75,11 @@ MainView {
         header: PageHeader {
             id: header
             title: player.title == "" ? i18n.tr("Ambient") : player.title
+            exposed: true
+            StyleHints {
+                foregroundColor: UbuntuColors.warmGrey
+                backgroundColor: "#292929"
+            }
             leadingActionBar.actions: [
                 Action {
                     iconName: "back"
@@ -82,6 +87,9 @@ MainView {
                     visible: moveout.x == 0
                     onTriggered: {
                         moveout.x = player.width
+                        if (aud.playbackState != Audio.PlayingState) {
+                            header.title = i18n.tr("Ambient")
+                        }
                     }
                 }
             ]
@@ -99,12 +107,14 @@ MainView {
                     onTriggered: PopupUtils.open(infoComponent, header);
                 }
             ]
-            flickable: lv
         }
 
         ListView {
             id: lv
-            anchors.fill: parent
+            anchors.top: header.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
             model: lm
             delegate: ListItem {
 
@@ -141,15 +151,14 @@ MainView {
         }
 
 
-        Image {
+        Item {
             function showItem(idx) {
                 var iidx = idx % lm.count
                 if (iidx < 0) iidx = lm.count + iidx; // + because iidx is -1
-                console.log("iidx now", iidx);
                 var model = lm.get(iidx);
-                console.log("model now", model);
                 player.itemIndex = iidx;
                 player.title = model.title;
+                header.title = model.title;
                 player.image_letterbox_filename = model.image_letterbox_filename;
                 player.image_credit_name = model.image_credit_name;
                 player.image_credit_url = model.image_credit_url;
@@ -157,7 +166,25 @@ MainView {
                 player.sound_credit_name = model.sound_credit_name;
                 player.sound_credit_url = model.sound_credit_url;
                 moveout.x = 0;
-                player.currentlyPlaying = "none"; // because nothing is playing. We set this when we play
+
+                if (aud.playbackState == Audio.PlayingState) {
+                    // trigger this in a Timer to get it off the main thread
+                    stopStartSound.start();
+                }
+            }
+
+            Timer {
+                id: stopStartSound
+                interval: 1
+                running: false
+                onTriggered: {
+                    aud.pause();
+                    playlist.clear();
+                    for (var i=0; i<5; i++) {
+                        playlist.addItem(Qt.resolvedUrl("resources/" + player.sound_filename));
+                    }
+                    aud.play();
+                }
             }
 
             id: player
@@ -170,13 +197,19 @@ MainView {
             property string sound_credit_name
             property string sound_credit_url
             property string currentlyPlaying: "none"
-            source: "resources/" + player.image_letterbox_filename
-            fillMode: Image.PreserveAspectCrop
+
             anchors.fill: parent
             transform: Translate {
                  id: moveout
                  x: parent.width
                  Behavior on x { NumberAnimation { duration: 150; easing.type: Easing.OutQuad } }
+            }
+
+            Image {
+                id: bgimg
+                source: "resources/" + player.image_letterbox_filename
+                fillMode: Image.PreserveAspectCrop
+                anchors.fill: parent
             }
 
             Audio {
@@ -198,7 +231,9 @@ MainView {
                 anchors.right: buttons.right
                 anchors.bottomMargin: -units.gu(1)
                 anchors.topMargin: -units.gu(1)
-                width: buttons.width
+                anchors.leftMargin: -units.gu(1)
+                anchors.rightMargin: -units.gu(1)
+                width: buttons.width + units.gu(2)
                 height: buttons.height + units.gu(2)
                 color: Qt.rgba(0,0,0,0.2)
             }
@@ -208,7 +243,8 @@ MainView {
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: parent.height / 10
                 anchors.left: parent.left
-                width: parent.width
+                anchors.leftMargin: units.gu(1)
+                width: parent.width - units.gu(2)
                 spacing: units.gu(1)
 
                 Button {
@@ -239,17 +275,11 @@ MainView {
                         if (aud.playbackState == Audio.PlayingState) {
                             aud.pause();
                         } else {
-                            if (player.currentlyPlaying == player.title) {
-                                // we are already playing this one and have just paused, so unpause
-                                aud.play();
-                            } else {
-                                // we aren't currently playing this one, so kill anything playing and play this
-                                playlist.clear();
-                                for (var i=0; i<5; i++) {
-                                    playlist.addItem(Qt.resolvedUrl("resources/" + player.sound_filename));
-                                }
-                                aud.play();
+                            playlist.clear();
+                            for (var i=0; i<5; i++) {
+                                playlist.addItem(Qt.resolvedUrl("resources/" + player.sound_filename));
                             }
+                            aud.play();
                         }
                     }
 

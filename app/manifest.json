@@ -9,7 +9,7 @@
             "desktop": "Ambient.desktop"
         }
     },
-    "version": "0.1",
+    "version": "1.0",
     "maintainer": "Stuart Langridge <sil-launchpad@kryogenix.org>",
     "framework": "ubuntu-sdk-15.04.3"
 }

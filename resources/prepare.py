@@ -26,7 +26,7 @@ def process_image(imgin, imgout, width, height):
     subprocess.call(cmd)
 
 def process_sound(sndin, sndout):
-    cmd = ["oggenc", "-q", "2", sndin, "-o", sndout]
+    cmd = ["oggenc", "-b", "32", "--downmix", "--resample", "22050", sndin, "-o", sndout]
     #print " ".join(cmd)
     subprocess.call(cmd)
 
