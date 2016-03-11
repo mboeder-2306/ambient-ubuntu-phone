@@ -89,7 +89,7 @@ MainView {
                 Action {
                     iconName: "settings"
                     text: "Settings"
-                    visible: true
+                    visible: false
                 },
                 Action {
                     id: info
