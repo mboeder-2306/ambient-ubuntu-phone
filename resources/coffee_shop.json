@@ -1,0 +1,17 @@
+{
+    "audio": {
+        "filename": "coffee_shop_anoise.wav",
+        "credit": {
+            "url": "http://www.freesound.org/people/RHumphries/sounds/2523/",
+            "name": "RHumphries"
+        }
+    },
+    "image": {
+        "filename": "restaurant-people-alcohol-bar.jpg",
+        "credit": {
+            "name": "unsplash",
+            "url": "https://www.pexels.com/photo/restaurant-people-alcohol-bar-2286/"
+        }
+    },
+    "title": "Coffee Shop"
+}

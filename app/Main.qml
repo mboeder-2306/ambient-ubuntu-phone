@@ -3,6 +3,7 @@ import Ubuntu.Components 1.3
 import QtGraphicalEffects 1.0
 import QtMultimedia 5.6
 import Ubuntu.Components.Popups 1.3
+import U1db 1.0 as U1db
 
 
 import "resources.js" as RES
@@ -27,6 +28,20 @@ MainView {
 
     width: units.gu(40)
     height: units.gu(70)
+
+    U1db.Database { id: db; path: "ambient.u1db" }
+    U1db.Document {
+        id: settings
+        database: db
+        docId: "settings"
+        create: true
+        defaults: { timer: 60 }
+        Component.onCompleted: {
+            if (!settings.contents || !settings.contents.timer) {
+                settings.contents = {timer: 60};
+            }
+        }
+    }
 
     ListModel {
         id: lm
@@ -68,6 +83,51 @@ MainView {
         }
     }
 
+    Component {
+        id: settingsComponent
+        Popover {
+            id: settingsPopover
+            Column {
+                id: settingsContainerLayout
+                anchors {
+                    left: parent.left
+                    top: parent.top
+                    right: parent.right
+                    leftMargin: units.gu(1)
+                    rightMargin: units.gu(1)
+                }
+                ListItem {
+                    height: timerSlider.height + timerSliderLabel.height + units.gu(1) + 50
+                    Column {
+                        id: timerSetter
+                        spacing: units.gu(1)
+                        width: parent.width - units.gu(2)
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.bottom: parent.bottom
+                        Label {
+                            id: timerSliderLabel
+                            text: "Sleep time: " + timerLabel.formatTime(Math.round(timerSlider.value) * 15);
+                            fontSize: "large"
+                            width: parent.width
+                        }
+
+                        Slider {
+                            id: timerSlider
+                            minimumValue: 1
+                            maximumValue: 12
+                            value: settings.contents.timer / 15
+                            function formatValue(v) { return timerLabel.formatTime(Math.round(v) * 15); }
+                            width: parent.width
+                            onValueChanged: {
+                                settings.contents = {timer: Math.round(value) * 15};
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     Page {
         id: front
         title: player.title == "" ? i18n.tr("Ambient") : player.title
@@ -97,7 +157,8 @@ MainView {
                 Action {
                     iconName: "settings"
                     text: "Settings"
-                    visible: false
+                    visible: true
+                    onTriggered: PopupUtils.open(settingsComponent, header);
                 },
                 Action {
                     id: info
@@ -165,6 +226,7 @@ MainView {
                 player.sound_filename = model.sound_filename;
                 player.sound_credit_name = model.sound_credit_name;
                 player.sound_credit_url = model.sound_credit_url;
+                player.sound_length_seconds = model.sound_length_seconds;
                 moveout.x = 0;
 
                 if (aud.playbackState == Audio.PlayingState) {
@@ -179,10 +241,7 @@ MainView {
                 running: false
                 onTriggered: {
                     aud.pause();
-                    playlist.clear();
-                    for (var i=0; i<5; i++) {
-                        playlist.addItem(Qt.resolvedUrl("resources/" + player.sound_filename));
-                    }
+                    playlist.queueCorrectNumber();
                     aud.play();
                 }
             }
@@ -196,6 +255,7 @@ MainView {
             property string sound_filename
             property string sound_credit_name
             property string sound_credit_url
+            property int sound_length_seconds: 600
             property string currentlyPlaying: "none"
 
             anchors.fill: parent
@@ -216,6 +276,14 @@ MainView {
                 id: aud
                 playlist: Playlist {
                     id: playlist
+                    function queueCorrectNumber() {
+                        var playfor_seconds = settings.contents.timer * 60;
+                        var iterations = Math.round(playfor_seconds / player.sound_length_seconds);
+                        playlist.clear();
+                        for (var i=0; i<iterations; i++) {
+                            playlist.addItem(Qt.resolvedUrl("resources/" + player.sound_filename));
+                        }
+                    }
                 }
             }
 
@@ -236,6 +304,47 @@ MainView {
                 width: buttons.width + units.gu(2)
                 height: buttons.height + units.gu(2)
                 color: Qt.rgba(0,0,0,0.2)
+            }
+
+            Label {
+                id: timerLabel
+                function formatTime(t) {
+                    var t2 = parseInt(t, 10);
+                    t2 = Math.ceil(t2 / 15);
+                    var h = Math.floor(t2 / 4);
+                    var q = t2 % 4;
+                    var ret = "";
+                    if (h > 0) {
+                        ret = h + " hour"
+                        if (h > 1) { ret += "s"; }
+                        ret += " ";
+                    }
+                    ret += ["", "15m", "30m", "45m"][q];
+                    return ret;
+                }
+
+                text: formatTime(settings.contents.timer || 30)
+                color: "white"
+                font.pixelSize: units.gu(5)
+                anchors.top: parent.top
+                anchors.right: parent.right
+                anchors.topMargin: header.height + units.gu(1)
+                anchors.rightMargin: units.gu(1)
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: PopupUtils.open(settingsComponent, header);
+                }
+            }
+
+            DropShadow {
+                anchors.fill: timerLabel
+                horizontalOffset: units.dp(2)
+                verticalOffset: units.dp(2)
+                radius: units.dp(2)
+                samples: 16
+                color: "#cc000000"
+                source: timerLabel
             }
 
             Row {
@@ -275,10 +384,7 @@ MainView {
                         if (aud.playbackState == Audio.PlayingState) {
                             aud.pause();
                         } else {
-                            playlist.clear();
-                            for (var i=0; i<5; i++) {
-                                playlist.addItem(Qt.resolvedUrl("resources/" + player.sound_filename));
-                            }
+                            playlist.queueCorrectNumber();
                             aud.play();
                         }
                     }
