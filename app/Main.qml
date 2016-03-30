@@ -313,13 +313,18 @@ MainView {
                     t2 = Math.ceil(t2 / 15);
                     var h = Math.floor(t2 / 4);
                     var q = t2 % 4;
-                    var ret = "";
-                    if (h > 0) {
-                        ret = h + " hour"
-                        if (h > 1) { ret += "s"; }
+                    var ret;
+
+                    if (h == 0) {
+                        ret = ["", "15", "30", "45"][q];
                         ret += " ";
+                        ret += i18n.tr("minutes");
+                    } else if (h == 1 && q == 0){
+                        ret = "1 " + i18n.tr("hour");
+                    } else {
+                        ret = h + ["", "¼", "½", "¾"][q] + " " + i18n.tr("hours");
                     }
-                    ret += ["", "15m", "30m", "45m"][q];
+
                     return ret;
                 }
 
@@ -371,8 +376,10 @@ MainView {
                     height: width
                 }
                 Button {
+                    id: playbutton
+                    property bool queueing: false
                     Icon {
-                        name: aud.playbackState == Audio.PlayingState ? "media-playback-stop" : "media-playback-start"
+                        name: playbutton.queueing ? "history" : (aud.playbackState == Audio.PlayingState ? "media-playback-stop" : "media-playback-start")
                         width: parent.width * 0.9
                         height: parent.width * 0.9
                         anchors.centerIn: parent
@@ -384,13 +391,24 @@ MainView {
                         if (aud.playbackState == Audio.PlayingState) {
                             aud.pause();
                         } else {
-                            playlist.queueCorrectNumber();
-                            aud.play();
+                            playbutton.queueing = true;
+                            queueCorrectTimer.start(); // so it runs in the background
                         }
                     }
 
                     width: (parent.width - units.gu(2)) / 3
                     height: width
+
+                    Timer {
+                        id: queueCorrectTimer
+                        onTriggered: {
+                            playlist.queueCorrectNumber();
+                            aud.play();
+                            playbutton.queueing = false;
+                        }
+                        interval: 1
+                        repeat: false
+                    }
                 }
                 Button {
                     Icon {

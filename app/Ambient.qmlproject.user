@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 3.5.0, 2016-03-12T11:51:40. -->
+<!-- Written by QtCreator 3.5.1, 2016-03-30T12:13:01. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -116,10 +116,14 @@
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedFiles">
        <value type="QString">/home/aquarius/Programs/Mine/Ambient/ambient.sil_1.0.1_all.click</value>
        <value type="QString">/usr/ubuntu-sdk-ide/share/qtcreator/ubuntu/scripts/qtc_device_applaunch.py</value>
+       <value type="QString">/home/aquarius/Programs/Mine/Ambient/ambient.sil_1.21_all.click</value>
        <value type="QString">/home/aquarius/Programs/Mine/Ambient/ambient.sil_0.1_all.click</value>
+       <value type="QString">/home/aquarius/Programs/Mine/Ambient/ambient.sil_1.2_all.click</value>
        <value type="QString">/home/aquarius/Programs/Mine/Ambient/ambient.sil_1.0_all.click</value>
       </valuelist>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedHosts">
+       <value type="QString">127.0.0.1</value>
+       <value type="QString">127.0.0.1</value>
        <value type="QString">127.0.0.1</value>
        <value type="QString">127.0.0.1</value>
        <value type="QString">127.0.0.1</value>
@@ -130,17 +134,23 @@
        <value type="QString">/tmp</value>
        <value type="QString">/tmp</value>
        <value type="QString">/tmp</value>
+       <value type="QString">/tmp</value>
+       <value type="QString">/tmp</value>
       </valuelist>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedSysroots">
        <value type="QString">/var/lib/schroot/chroots/click-ubuntu-sdk-15.04-armhf</value>
        <value type="QString">/var/lib/schroot/chroots/click-ubuntu-sdk-15.04-armhf</value>
        <value type="QString">/var/lib/schroot/chroots/click-ubuntu-sdk-15.04-armhf</value>
        <value type="QString">/var/lib/schroot/chroots/click-ubuntu-sdk-15.04-armhf</value>
+       <value type="QString">/var/lib/schroot/chroots/click-ubuntu-sdk-15.04-armhf</value>
+       <value type="QString">/var/lib/schroot/chroots/click-ubuntu-sdk-15.04-armhf</value>
       </valuelist>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedTimes">
-       <value type="QDateTime">2016-03-12T11:49:27</value>
-       <value type="QDateTime">2016-03-12T11:49:27</value>
+       <value type="QDateTime">2016-03-12T13:19:11</value>
+       <value type="QDateTime">2016-03-30T12:08:35</value>
+       <value type="QDateTime">2016-03-30T12:08:35</value>
        <value type="QDateTime">2016-03-11T18:11:37</value>
+       <value type="QDateTime">2016-03-30T11:42:14</value>
        <value type="QDateTime">2016-03-11T19:16:57</value>
       </valuelist>
      </valuemap>

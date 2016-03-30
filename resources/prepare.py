@@ -26,7 +26,7 @@ def process_image(imgin, imgout, width, height):
     subprocess.call(cmd)
 
 def process_sound(sndin, sndout):
-    cmd = ["oggenc", "-b", "32", "--downmix", "--resample", "22050", sndin, "-o", sndout]
+    cmd = ["oggenc", "-b", "64", "--downmix", "--resample", "22050", sndin, "-o", sndout]
     #print " ".join(cmd)
     subprocess.call(cmd)
     cmd = ["ogginfo", sndout]
@@ -35,11 +35,12 @@ def process_sound(sndin, sndout):
     if len(length) != 1:
         print "Error finding OGG length"
         return 600
-    m = re.search("Playback length: ([0-9]+)m:([0-9.])+s", length[0])
+    m = re.search("Playback length: ([0-9]+)m:([0-9.]+)s", length[0])
+    print "GOT M", m, m.groups()
     if not m:
         print "Error parsing OGG length (in line %r)" % length[0]
         return 600
-    return int(m.groups()[0]) * 60 + int(m.groups()[1])
+    return int(m.groups()[0]) * 60 + int(float(m.groups()[1]))
 
 def process(j, container, tempdir):
     fp = open(j)

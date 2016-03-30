@@ -1,0 +1,17 @@
+{
+    "audio": {
+        "filename": "forest_rain.wav",
+        "credit": {
+            "url": "http://gnome-look.org/usermanager/search.php?username=Prodigal",
+            "name": "Gordon VS and anoise"
+        }
+    },
+    "image": {
+        "filename": "forest_rain.jpg",
+        "credit": {
+            "name": "Unripe Content",
+            "url": "https://www.youtube.com/watch?v=WS1RISo5nw8"
+        }
+    },
+    "title": "Forest rain"
+}
